@@ -223,6 +223,5 @@ SOFTWARE.
 ## 📞 Support
 
 - 📖 [Documentation](docs/)
-- 💬 [Discussions](https://github.com/your-org/enterprise-ai-decision-system/discussions)
-- 🐛 [Issue Tracker](https://github.com/your-org/enterprise-ai-decision-system/issues)
->>>>>>> 7bab1bf (Created repository and structure)
+- 💬 [Discussions](https://github.com/OnlyAhad13/autonomous-enterprise-ai-decision-system/discussions)
+- 🐛 [Issue Tracker](https://github.com/OnlyAhad13/autonomous-enterprise-ai-decision-system/issues)
