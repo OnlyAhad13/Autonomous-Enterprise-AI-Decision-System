@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# Autonomous-Enterprise-AI-Decision-System
-A fully autonomous analytics + AI execution engine that continuously ingests data, learns patterns, deploys ML/LLMs, issues actions, and self-monitors — powered by Airflow, Kafka, Spark, ML frameworks, agents, and LLM tool orchestration.
-=======
 # Autonomous Enterprise AI Decision System
 
 [![CI](https://github.com/your-org/enterprise-ai-decision-system/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/enterprise-ai-decision-system/actions/workflows/ci.yml)
