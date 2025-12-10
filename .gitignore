@@ -100,12 +100,11 @@ dmypy.json
 mlruns/
 mlartifacts/
 
-# Data files
+# Data files (ignore generated data, keep schema and code)
 *.csv
-*.parquet
-*.json
-!tests/fixtures/*.json
-data/
+!data/schema.yaml
+!data/sample_generator.py
+data/sample/
 
 # Model files
 *.pkl

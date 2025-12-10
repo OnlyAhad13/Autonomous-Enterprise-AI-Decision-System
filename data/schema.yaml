@@ -1,0 +1,97 @@
+# Business Event Schema
+# Kafka-compatible schema for streaming business events
+# Compatible with Confluent Schema Registry (when converted to Avro/JSON Schema)
+
+schema:
+  name: BusinessEvent
+  namespace: com.enterprise.events
+  version: "1.0.0"
+  description: Schema for streaming business transaction events
+
+fields:
+  - name: id
+    type: string
+    format: uuid
+    required: true
+    description: Unique identifier for the event (UUID v4)
+    example: "550e8400-e29b-41d4-a716-446655440000"
+
+  - name: timestamp
+    type: string
+    format: datetime
+    required: true
+    description: ISO 8601 timestamp when the event occurred
+    example: "2024-01-15T10:30:00.000Z"
+
+  - name: user_id
+    type: string
+    required: true
+    description: Unique identifier for the user
+    example: "usr_abc123def456"
+
+  - name: product_id
+    type: string
+    required: true
+    description: Unique identifier for the product
+    example: "prod_xyz789"
+
+  - name: price
+    type: number
+    format: float
+    required: true
+    minimum: 0.0
+    description: Transaction price in USD
+    example: 99.99
+
+  - name: quantity
+    type: integer
+    required: true
+    minimum: 1
+    description: Number of items in the transaction
+    example: 2
+
+  - name: location
+    type: string
+    required: true
+    description: Geographic location (city, country format)
+    example: "New York, USA"
+
+  - name: metadata
+    type: object
+    required: false
+    description: Additional event metadata as JSON object
+    properties:
+      - name: channel
+        type: string
+        enum: ["web", "mobile", "api", "pos"]
+        description: Sales channel
+      - name: device_type
+        type: string
+        description: Device used for transaction
+      - name: session_id
+        type: string
+        description: Session identifier
+      - name: referrer
+        type: string
+        description: Traffic referrer source
+      - name: tags
+        type: array
+        items: string
+        description: Custom tags for the event
+    example:
+      channel: "web"
+      device_type: "desktop"
+      session_id: "sess_123abc"
+
+# Kafka configuration hints
+kafka:
+  topic_name: business-events
+  key_field: user_id
+  partition_count: 12
+  replication_factor: 3
+  retention_ms: 604800000  # 7 days
+
+# Validation rules
+validation:
+  max_metadata_size_bytes: 4096
+  allowed_currencies: ["USD", "EUR", "GBP", "JPY", "CAD"]
