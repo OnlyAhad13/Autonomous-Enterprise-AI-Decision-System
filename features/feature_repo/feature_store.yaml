@@ -1,0 +1,28 @@
+# Feast Feature Store Configuration
+# Local development setup with SQLite online store
+
+project: enterprise_ai_features
+provider: local
+
+# Registry stores feature definitions
+registry: data/registry.db
+
+# Offline store: File-based (Parquet)
+offline_store:
+  type: file
+
+# Online store: SQLite for development
+# For production, use Redis:
+#   type: redis
+#   connection_string: "redis://localhost:6379"
+online_store:
+  type: sqlite
+  path: data/online_store.db
+
+# Entity key serialization
+entity_key_serialization_version: 2
+
+# Feature flags
+flags:
+  alpha_features: true
+  on_demand_transforms: true

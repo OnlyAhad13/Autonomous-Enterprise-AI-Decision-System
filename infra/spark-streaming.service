@@ -1,0 +1,67 @@
+# Spark Streaming Service
+# systemd unit file for bare-metal deployment
+#
+# Installation:
+#   1. Copy this file to /etc/systemd/system/spark-streaming.service
+#   2. Edit paths and user as needed
+#   3. Run: sudo systemctl daemon-reload
+#   4. Run: sudo systemctl enable spark-streaming
+#   5. Run: sudo systemctl start spark-streaming
+#
+# Logs: journalctl -u spark-streaming -f
+
+[Unit]
+Description=Spark Streaming to Delta Lake
+Documentation=https://github.com/your-org/enterprise-ai
+After=network-online.target kafka.service
+Wants=network-online.target
+Requires=kafka.service
+
+[Service]
+Type=simple
+User=spark
+Group=spark
+WorkingDirectory=/opt/enterprise-ai
+
+# Environment
+Environment="SPARK_HOME=/opt/spark"
+Environment="JAVA_HOME=/usr/lib/jvm/java-11-openjdk"
+Environment="PATH=/opt/spark/bin:/usr/local/bin:/usr/bin:/bin"
+
+# Command
+ExecStart=/opt/spark/bin/spark-submit \
+    --master local[*] \
+    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,io.delta:delta-spark_2.12:3.0.0 \
+    --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
+    --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog" \
+    --conf "spark.driver.memory=4g" \
+    --conf "spark.executor.memory=4g" \
+    --conf "spark.driver.extraJavaOptions=-XX:+UseG1GC" \
+    /opt/enterprise-ai/spark_jobs/streaming_to_delta.py \
+    --config /opt/enterprise-ai/conf/streaming.conf
+
+# Graceful shutdown
+ExecStop=/bin/kill -SIGTERM $MAINPID
+TimeoutStopSec=60
+KillMode=mixed
+KillSignal=SIGTERM
+
+# Restart policy with backoff
+Restart=on-failure
+RestartSec=10
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=4096
+MemoryMax=8G
+CPUQuota=200%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=spark-streaming
+
+[Install]
+WantedBy=multi-user.target

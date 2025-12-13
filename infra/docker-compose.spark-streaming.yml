@@ -1,0 +1,99 @@
+# Spark Streaming Infrastructure
+# Docker Compose for running the streaming-to-delta job
+
+version: '3.8'
+
+services:
+  spark-streaming:
+    image: bitnami/spark:3.5.0
+    container_name: enterprise-ai-spark-streaming
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_URL=local[*]
+    command: >
+      spark-submit
+        --master local[*]
+        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,io.delta:delta-spark_2.12:3.0.0
+        --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension"
+        --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
+        --conf "spark.driver.memory=2g"
+        --conf "spark.executor.memory=2g"
+        /opt/spark-jobs/streaming_to_delta.py
+        --config /opt/conf/streaming.conf
+    volumes:
+      - ../spark_jobs:/opt/spark-jobs:ro
+      - ../conf:/opt/conf:ro
+      - ../data:/opt/data
+      - ./spark-checkpoints:/opt/data/lake/checkpoints
+    networks:
+      - kafka-network
+    depends_on:
+      - kafka-healthcheck
+    restart: on-failure:5
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4040/api/v1/applications"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Kafka health check sidecar
+  kafka-healthcheck:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: spark-kafka-healthcheck
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      echo 'Waiting for Kafka to be ready...';
+      cub kafka-ready -b kafka:9093 1 120;
+      echo 'Kafka is ready!';
+      sleep infinity
+      "
+    networks:
+      - kafka-network
+    depends_on:
+      - kafka
+
+  # Optional: Kafka for standalone testing
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: enterprise-ai-kafka-streaming
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9094
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093,CONTROLLER://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      CLUSTER_ID: streaming-cluster-001
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      - kafka-network
+    ports:
+      - "9093:9093"
+    profiles:
+      - standalone
+
+networks:
+  kafka-network:
+    external: true
+    name: enterprise-ai-kafka-network
+
+volumes:
+  kafka-data:

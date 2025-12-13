@@ -1,8 +1,6 @@
 # Airflow Infrastructure
 # Local development setup with scheduler and webserver
 
-version: '3.8'
-
 x-airflow-common: &airflow-common
   image: apache/airflow:2.8.1-python3.11
   environment:
@@ -14,13 +12,6 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
-    # Spark configuration
-    SPARK_HOME: /opt/spark
-    PATH: /opt/spark/bin:${PATH}
-    _PIP_ADDITIONAL_REQUIREMENTS: >-
-      apache-airflow-providers-apache-spark
-      delta-spark==2.4.0
-      pyspark==3.5.0
   volumes:
     - ../ingest/dags:/opt/airflow/dags
     - ../spark_jobs:/opt/airflow/project/spark_jobs
@@ -115,19 +106,6 @@ services:
     command:
       - -c
       - |
-        function ver() {
-          printf "%04d%04d%04d%04d" $${1//./ }
-        }
-        airflow_version=$$(AIRFLOW__LOGGING__LOGGING_LEVEL=INFO && gosu airflow airflow version)
-        airflow_version_comparable=$$(ver $${airflow_version})
-        min_airflow_version=2.2.0
-        min_airflow_version_comparable=$$(ver $${min_airflow_version})
-        if (( airflow_version_comparable < min_airflow_version_comparable )); then
-          echo
-          echo -e "\033[1;31mERROR!!!: Too old Airflow version $${airflow_version}!\e[0m"
-          echo "The minimum Airflow version supported: $${min_airflow_version}. Only use this in case of upgrade."
-          exit 1
-        fi
         if [[ -z "${AIRFLOW_UID}" ]]; then
           echo
           echo -e "\033[1;33mWARNING!!!: AIRFLOW_UID not set!\e[0m"
@@ -171,7 +149,7 @@ services:
           echo
         fi
         mkdir -p /sources/logs /sources/dags /sources/plugins
-        chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
+        chown -R "${AIRFLOW_UID:-50000}:0" /sources/{logs,dags,plugins}
         exec /entrypoint airflow version
     environment:
       <<: *airflow-common-env
