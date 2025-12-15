@@ -112,7 +112,9 @@ data/sample/
 *.h5
 *.pt
 *.pth
-models/
+models/*/saved/
+!models/forecasting/
+!models/__init__.py
 
 # Logs
 logs/
