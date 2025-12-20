@@ -1,0 +1,52 @@
+# MLflow Local Configuration
+# Use this for local development and testing
+
+# Tracking server configuration
+tracking:
+  # Local file-based tracking URI
+  uri: "file:///home/onlyahad/Desktop/Flagship Project/mlruns"
+  
+  # Alternative: SQLite backend (better for concurrent access)
+  # uri: "sqlite:///mlruns.db"
+
+# Artifact storage configuration
+artifacts:
+  # Local file storage
+  root: "./mlruns"
+  
+# Default experiment settings
+experiments:
+  default_name: "Default"
+  auto_create: true
+
+# Model registry configuration
+registry:
+  # Use file-based registry (included with tracking URI)
+  enabled: true
+  
+# Promotion settings
+promotion:
+  # Metric thresholds for auto-promotion (lower is better for these)
+  thresholds:
+    mape_improvement_pct: 5.0    # Require 5% MAPE improvement
+    mse_improvement_pct: 10.0   # Require 10% MSE reduction
+    min_samples: 100            # Minimum validation samples
+  
+  # Stages
+  stages:
+    candidate: "None"
+    staging: "Staging"
+    production: "Production"
+    archived: "Archived"
+
+# Webhook configuration (disabled for local)
+webhook:
+  enabled: false
+  url: null
+  timeout_seconds: 30
+  retry_attempts: 3
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

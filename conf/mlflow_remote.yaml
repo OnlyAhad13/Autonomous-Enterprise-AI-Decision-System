@@ -1,0 +1,109 @@
+# MLflow Remote Configuration
+# Use this for production with S3 artifact store + Postgres backend
+
+# Tracking server configuration
+tracking:
+  # Postgres backend for metadata
+  # Format: postgresql://user:password@host:port/database
+  uri: "${MLFLOW_TRACKING_URI:-postgresql://mlflow:mlflow_password@localhost:5432/mlflow}"
+  
+  # Authentication (if using MLflow authentication)
+  auth:
+    enabled: false
+    username: "${MLFLOW_TRACKING_USERNAME:-}"
+    password: "${MLFLOW_TRACKING_PASSWORD:-}"
+
+# Artifact storage configuration (S3)
+artifacts:
+  # S3 bucket for artifact storage
+  root: "${MLFLOW_S3_ARTIFACT_ROOT:-s3://mlflow-artifacts/}"
+  
+  # S3 credentials (use IAM roles in production)
+  s3:
+    endpoint_url: "${AWS_S3_ENDPOINT:-}"  # Leave empty for AWS, set for MinIO
+    access_key_id: "${AWS_ACCESS_KEY_ID:-}"
+    secret_access_key: "${AWS_SECRET_ACCESS_KEY:-}"
+    region: "${AWS_REGION:-us-east-1}"
+
+# Default experiment settings
+experiments:
+  default_name: "production"
+  auto_create: true
+
+# Model registry configuration
+registry:
+  enabled: true
+  # Registry database (uses same Postgres as tracking)
+  
+# Promotion settings
+promotion:
+  # Metric thresholds for auto-promotion
+  thresholds:
+    mape_improvement_pct: 5.0    # Require 5% MAPE improvement
+    mse_improvement_pct: 10.0   # Require 10% MSE reduction
+    min_samples: 100            # Minimum validation samples
+    
+  # Additional quality gates
+  quality_gates:
+    require_all_metrics: true   # All metrics must improve
+    require_tests_pass: true    # CI tests must pass
+    require_approval: false     # Manual approval required
+  
+  # Stages
+  stages:
+    candidate: "None"
+    staging: "Staging"
+    production: "Production"
+    archived: "Archived"
+
+# Webhook configuration for deployment triggers
+webhook:
+  enabled: true
+  url: "${MLFLOW_DEPLOY_WEBHOOK_URL:-http://localhost:8080/deploy}"
+  
+  # Authentication
+  auth:
+    type: "bearer"  # Options: none, bearer, basic
+    token: "${MLFLOW_WEBHOOK_TOKEN:-}"
+  
+  # Request settings
+  timeout_seconds: 30
+  retry_attempts: 3
+  retry_delay_seconds: 5
+  
+  # Payload customization
+  payload:
+    include_model_info: true
+    include_metrics: true
+    include_run_id: true
+
+# Notifications (optional)
+notifications:
+  slack:
+    enabled: false
+    webhook_url: "${SLACK_WEBHOOK_URL:-}"
+    channel: "#ml-deployments"
+  
+  email:
+    enabled: false
+    smtp_host: "${SMTP_HOST:-}"
+    smtp_port: 587
+    recipients: []
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # Remote logging (optional)
+  remote:
+    enabled: false
+    endpoint: "${LOG_ENDPOINT:-}"
+
+# Security
+security:
+  # Encrypt sensitive data in transit
+  tls:
+    enabled: true
+    verify: true
+    cert_path: "${TLS_CERT_PATH:-}"

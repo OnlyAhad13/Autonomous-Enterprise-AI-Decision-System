@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SHAP Explanation Report</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        
+        .prediction-box {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        
+        .metric {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 28px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            min-width: 140px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .metric.positive {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+        }
+        
+        .metric.negative {
+            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+        }
+        
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:hover {
+            background: #fafafa;
+        }
+        
+        .impact-bar {
+            width: 180px;
+            height: 18px;
+            background: #f0f0f0;
+            position: relative;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .impact-bar .bar {
+            position: absolute;
+            height: 100%;
+            border-radius: 3px;
+        }
+        
+        .impact-bar .center-line {
+            position: absolute;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background: #333;
+            z-index: 2;
+        }
+        
+        .shap-positive {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        
+        .shap-negative {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+        }
+        
+        .drivers-section {
+            display: flex;
+            gap: 20px;
+            margin-top: 24px;
+        }
+        
+        .driver-box {
+            flex: 1;
+            padding: 16px;
+            border-radius: 8px;
+        }
+        
+        .driver-box.positive {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .driver-box.negative {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(30, 132, 73, 0.1) 100%);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+        
+        .driver-box h4 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+        }
+        
+        .driver-box.positive h4 {
+            color: #c0392b;
+        }
+        
+        .driver-box.negative h4 {
+            color: #1e8449;
+        }
+        
+        .driver-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .driver-list li {
+            padding: 6px 0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .driver-list li::before {
+            content: "→";
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 12px;
+            margin-top: 32px;
+            padding: 16px;
+        }
+        
+        code {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔍 SHAP Explanation Report</h1>
+        <p class="subtitle">Prediction ID: <code>{{ prediction_id }}</code></p>
+        
+        <div class="prediction-box">
+            <div class="metric {{ 'positive' if predicted_class == 1 else 'negative' }}">
+                <div class="metric-value">{{ 'Churned' if predicted_class == 1 else 'Retained' }}</div>
+                <div class="metric-label">Prediction</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{{ "%.1f" | format(predicted_probability * 100) }}%</div>
+                <div class="metric-label">Probability</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">{{ "%.2f" | format(base_value) }}</div>
+                <div class="metric-label">Base Value</div>
+            </div>
+        </div>
+        
+        <h3>📊 Feature Contributions</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Value</th>
+                    <th>SHAP Contribution</th>
+                    <th>Visual Impact</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contribution in feature_contributions %}
+                <tr>
+                    <td style="font-weight: 500;">{{ contribution.feature }}</td>
+                    <td>{{ "%.2f" | format(contribution.value) }}</td>
+                    <td class="{{ 'shap-positive' if contribution.shap_value > 0 else 'shap-negative' }}">
+                        {{ "%+.3f" | format(contribution.shap_value) }}
+                    </td>
+                    <td>
+                        <div class="impact-bar">
+                            <div class="bar" style="
+                                background: {{ '#e74c3c' if contribution.shap_value > 0 else '#27ae60' }};
+                                width: {{ (contribution.shap_value | abs * 200) | min(90) }}px;
+                                {{ 'right: 50%' if contribution.shap_value < 0 else 'left: 50%' }};
+                            "></div>
+                            <div class="center-line"></div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e74c3c;"></div>
+                <span>Increases churn risk (positive SHAP)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #27ae60;"></div>
+                <span>Decreases churn risk (negative SHAP)</span>
+            </div>
+        </div>
+        
+        <div class="drivers-section">
+            <div class="driver-box positive">
+                <h4>⚠️ Top Risk Drivers</h4>
+                <ul class="driver-list">
+                    {% for driver in top_positive_drivers %}
+                    <li>{{ driver }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="driver-box negative">
+                <h4>✅ Retention Factors</h4>
+                <ul class="driver-list">
+                    {% for driver in top_negative_drivers %}
+                    <li>{{ driver }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        Generated at {{ generated_at }} | Model Explainability API v1.0.0
+    </footer>
+</body>
+</html>
