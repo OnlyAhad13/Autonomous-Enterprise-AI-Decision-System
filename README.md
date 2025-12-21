@@ -32,7 +32,7 @@
 <br><b>Kafka</b>
 </td>
 <td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apache/apache-original.svg" alt="Spark" width="48" height="48"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Apache_Spark_logo.svg/512px-Apache_Spark_logo.svg.png" alt="Spark" width="48" height="48"/>
 <br><b>Spark</b>
 </td>
 <td align="center" width="96">
@@ -92,7 +92,7 @@
 <br><b>Actions</b>
 </td>
 <td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/openai/openai-original.svg" alt="OpenAI" width="48" height="48" style="filter: invert(1);"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/OpenAI_Logo.svg/512px-OpenAI_Logo.svg.png" alt="OpenAI" width="48" height="48"/>
 <br><b>OpenAI</b>
 </td>
 </tr>
