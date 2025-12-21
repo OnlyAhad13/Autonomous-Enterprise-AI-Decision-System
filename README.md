@@ -40,7 +40,7 @@
 <br><b>PyTorch</b>
 </td>
 <td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" alt="TensorFlow" width="48" height="48"/>
+<img src="https://www.mlflow.org/docs/latest/_static/MLflow-logo-final-black.png" alt="MLflow" width="48" height="48"/>
 <br><b>MLflow</b>
 </td>
 </tr>
