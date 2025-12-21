@@ -1,0 +1,17 @@
+apiVersion: v2
+name: predict
+description: Helm chart for ML Prediction Service
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - ml
+  - prediction
+  - fastapi
+
+maintainers:
+  - name: ML Platform Team
+    email: ml-platform@company.com
+
+dependencies: []

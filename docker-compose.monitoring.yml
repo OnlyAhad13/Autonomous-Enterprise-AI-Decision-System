@@ -1,0 +1,85 @@
+# Docker Compose - Monitoring Stack
+# Prometheus + Grafana + Alertmanager
+
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./conf/alerting_rules.yml:/etc/prometheus/alerting_rules.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  alertmanager:
+    image: prom/alertmanager:v0.26.0
+    container_name: alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./conf/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    environment:
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./conf/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./conf/grafana/datasources.yml:/etc/grafana/provisioning/datasources/default.yml:ro
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  pushgateway:
+    image: prom/pushgateway:v1.6.2
+    container_name: pushgateway
+    ports:
+      - "9091:9091"
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.7.0
+    container_name: kafka-exporter
+    ports:
+      - "9308:9308"
+    command:
+      - '--kafka.server=kafka:9092'
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+  alertmanager-data:
+  grafana-data:

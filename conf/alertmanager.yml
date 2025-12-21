@@ -1,0 +1,207 @@
+# ==============================================================================
+# Alertmanager Configuration
+# ==============================================================================
+# Routes alerts to Slack and email based on severity and team
+# ==============================================================================
+
+global:
+  # SMTP configuration for email
+  smtp_smarthost: 'smtp.company.com:587'
+  smtp_from: 'alertmanager@company.com'
+  smtp_auth_username: 'alertmanager@company.com'
+  smtp_auth_password: '${SMTP_PASSWORD}'
+  smtp_require_tls: true
+
+  # Slack API URL
+  slack_api_url: '${SLACK_WEBHOOK_URL}'
+
+  # Default resolve timeout
+  resolve_timeout: 5m
+
+# ==============================================================================
+# Inhibition Rules
+# ==============================================================================
+# Prevent alert storms by suppressing related alerts
+
+inhibit_rules:
+  # If critical, suppress warning for same alertname
+  - source_matchers:
+      - severity="critical"
+    target_matchers:
+      - severity="warning"
+    equal: ['alertname', 'job']
+
+  # If service is down, suppress all other alerts for that service
+  - source_matchers:
+      - alertname="ServiceDown"
+    target_matchers:
+      - severity=~"warning|critical"
+    equal: ['job']
+
+# ==============================================================================
+# Routing Tree
+# ==============================================================================
+
+route:
+  # Default receiver
+  receiver: 'slack-ml-platform'
+  
+  # Group alerts by these labels
+  group_by: ['alertname', 'job', 'severity']
+  
+  # Wait before sending first notification
+  group_wait: 30s
+  
+  # Wait before sending updated notification
+  group_interval: 5m
+  
+  # Wait before resending notification
+  repeat_interval: 4h
+
+  # Child routes
+  routes:
+    # Critical alerts → PagerDuty + Slack
+    - matchers:
+        - severity="critical"
+      receiver: 'critical-alerts'
+      continue: true
+
+    # ML Platform team
+    - matchers:
+        - team="ml-platform"
+      receiver: 'slack-ml-platform'
+      routes:
+        - matchers:
+            - severity="critical"
+          receiver: 'pagerduty-ml'
+
+    # Data Platform team
+    - matchers:
+        - team="data-platform"
+      receiver: 'slack-data-platform'
+      routes:
+        - matchers:
+            - alertname=~"Kafka.*"
+          receiver: 'slack-data-platform'
+
+    # Model drift alerts → dedicated channel
+    - matchers:
+        - alertname=~".*Drift.*"
+      receiver: 'slack-model-monitoring'
+
+# ==============================================================================
+# Receivers
+# ==============================================================================
+
+receivers:
+  # --------------------------------------------------------------------------
+  # Slack - ML Platform
+  # --------------------------------------------------------------------------
+  - name: 'slack-ml-platform'
+    slack_configs:
+      - channel: '#ml-platform-alerts'
+        username: 'AlertManager'
+        icon_emoji: ':robot_face:'
+        send_resolved: true
+        title: '{{ if eq .Status "firing" }}🔥{{ else }}✅{{ end }} {{ .CommonLabels.alertname }}'
+        text: |
+          *Status:* {{ .Status | toUpper }}
+          *Severity:* {{ .CommonLabels.severity }}
+          *Summary:* {{ .CommonAnnotations.summary }}
+          
+          *Description:*
+          {{ .CommonAnnotations.description }}
+          
+          {{ if .CommonAnnotations.runbook_url }}*Runbook:* {{ .CommonAnnotations.runbook_url }}{{ end }}
+          
+          *Labels:*
+          {{ range .CommonLabels.SortedPairs }}• {{ .Name }}: `{{ .Value }}`
+          {{ end }}
+        actions:
+          - type: button
+            text: 'View in Grafana'
+            url: 'http://grafana:3000/d/ml-metrics'
+          - type: button
+            text: 'Silence Alert'
+            url: '{{ template "__alert_silence_link" . }}'
+
+  # --------------------------------------------------------------------------
+  # Slack - Data Platform
+  # --------------------------------------------------------------------------
+  - name: 'slack-data-platform'
+    slack_configs:
+      - channel: '#data-platform-alerts'
+        username: 'AlertManager'
+        icon_emoji: ':database:'
+        send_resolved: true
+        title: '{{ if eq .Status "firing" }}🔥{{ else }}✅{{ end }} {{ .CommonLabels.alertname }}'
+        text: |
+          *Severity:* {{ .CommonLabels.severity }}
+          *Summary:* {{ .CommonAnnotations.summary }}
+          {{ .CommonAnnotations.description }}
+
+  # --------------------------------------------------------------------------
+  # Slack - Model Monitoring
+  # --------------------------------------------------------------------------
+  - name: 'slack-model-monitoring'
+    slack_configs:
+      - channel: '#model-monitoring'
+        username: 'DriftBot'
+        icon_emoji: ':chart_with_downwards_trend:'
+        send_resolved: true
+        title: '📊 Model Drift Alert'
+        text: |
+          *Alert:* {{ .CommonLabels.alertname }}
+          *Status:* {{ .Status | toUpper }}
+          
+          {{ .CommonAnnotations.description }}
+          
+          {{ if eq .CommonLabels.alertname "ModelDriftDetected" }}
+          *Recommended Action:* Review drift metrics and consider triggering retraining.
+          {{ end }}
+
+  # --------------------------------------------------------------------------
+  # Critical Alerts (Multi-channel)
+  # --------------------------------------------------------------------------
+  - name: 'critical-alerts'
+    slack_configs:
+      - channel: '#critical-alerts'
+        username: 'AlertManager'
+        icon_emoji: ':rotating_light:'
+        send_resolved: true
+        title: '🚨 CRITICAL: {{ .CommonLabels.alertname }}'
+        text: |
+          *IMMEDIATE ATTENTION REQUIRED*
+          
+          {{ .CommonAnnotations.summary }}
+          {{ .CommonAnnotations.description }}
+    email_configs:
+      - to: 'oncall@company.com'
+        send_resolved: true
+        headers:
+          Subject: '[CRITICAL] {{ .CommonLabels.alertname }} - {{ .CommonAnnotations.summary }}'
+        html: |
+          <h2>Critical Alert</h2>
+          <p><strong>Alert:</strong> {{ .CommonLabels.alertname }}</p>
+          <p><strong>Summary:</strong> {{ .CommonAnnotations.summary }}</p>
+          <p><strong>Description:</strong> {{ .CommonAnnotations.description }}</p>
+          <p><strong>Time:</strong> {{ .StartsAt }}</p>
+
+  # --------------------------------------------------------------------------
+  # PagerDuty - ML Team
+  # --------------------------------------------------------------------------
+  - name: 'pagerduty-ml'
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_SERVICE_KEY}'
+        severity: '{{ .CommonLabels.severity }}'
+        description: '{{ .CommonAnnotations.summary }}'
+        details:
+          firing: '{{ template "pagerduty.default.instances" .Alerts.Firing }}'
+          resolved: '{{ template "pagerduty.default.instances" .Alerts.Resolved }}'
+
+# ==============================================================================
+# Templates
+# ==============================================================================
+
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'

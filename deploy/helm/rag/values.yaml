@@ -1,0 +1,70 @@
+# Default values for RAG service
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/your-org/enterprise-ai-rag
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets:
+  - name: ghcr-secret
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8001
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: rag.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+env:
+  - name: PORT
+    value: "8001"
+  - name: EMBEDDING_MODEL
+    value: "all-MiniLM-L6-v2"
+
+# Vector store configuration
+vectorStore:
+  type: milvus  # or faiss
+  milvusHost: milvus:19530
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8001
+  initialDelaySeconds: 30
+  periodSeconds: 15
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8001
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1

@@ -1,0 +1,261 @@
+# ==============================================================================
+# Prometheus Alerting Rules
+# ==============================================================================
+# Alert rules for Enterprise AI Decision System
+# ==============================================================================
+
+groups:
+  # ============================================================================
+  # Model Performance Alerts
+  # ============================================================================
+  - name: model_performance
+    interval: 30s
+    rules:
+      # High prediction latency
+      - alert: HighPredictionLatency
+        expr: |
+          histogram_quantile(0.99, 
+            sum(rate(http_request_duration_seconds_bucket{job="predict-service", handler="/predict"}[5m])) by (le)
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "High prediction latency detected"
+          description: "P99 prediction latency is {{ $value | humanizeDuration }} (threshold: 500ms)"
+          runbook_url: "https://wiki.company.com/runbooks/high-latency"
+      
+      # Critical latency (> 2s)
+      - alert: CriticalPredictionLatency
+        expr: |
+          histogram_quantile(0.99, 
+            sum(rate(http_request_duration_seconds_bucket{job="predict-service", handler="/predict"}[5m])) by (le)
+          ) > 2
+        for: 2m
+        labels:
+          severity: critical
+          team: ml-platform
+        annotations:
+          summary: "Critical prediction latency"
+          description: "P99 prediction latency is {{ $value | humanizeDuration }}. Immediate attention required."
+
+      # High error rate
+      - alert: HighPredictionErrorRate
+        expr: |
+          sum(rate(http_requests_total{job="predict-service", status=~"5.."}[5m])) 
+          / sum(rate(http_requests_total{job="predict-service"}[5m])) 
+          > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          team: ml-platform
+        annotations:
+          summary: "High prediction error rate"
+          description: "Error rate is {{ $value | humanizePercentage }}. Check service logs."
+
+  # ============================================================================
+  # Model Drift Alerts
+  # ============================================================================
+  - name: model_drift
+    interval: 60s
+    rules:
+      # Prediction drift above threshold
+      - alert: ModelDriftDetected
+        expr: model_drift_score > 0.1
+        for: 10m
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "Model drift detected"
+          description: "Drift score is {{ $value | printf \"%.3f\" }} (threshold: 0.1). Consider retraining."
+          runbook_url: "https://wiki.company.com/runbooks/model-drift"
+
+      # Critical drift (requires immediate action)
+      - alert: CriticalModelDrift
+        expr: model_drift_score > 0.2
+        for: 5m
+        labels:
+          severity: critical
+          team: ml-platform
+        annotations:
+          summary: "Critical model drift"
+          description: "Drift score is {{ $value | printf \"%.3f\" }}. Retraining required immediately."
+
+      # Feature drift
+      - alert: FeatureDrift
+        expr: feature_drift_score{feature!=""} > 0.15
+        for: 15m
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "Feature drift detected"
+          description: "Feature '{{ $labels.feature }}' drift score is {{ $value | printf \"%.3f\" }}."
+
+      # Prediction distribution shift
+      - alert: PredictionDistributionShift
+        expr: |
+          abs(
+            avg_over_time(prediction_mean[1h]) - avg_over_time(prediction_mean[24h] offset 1h)
+          ) / stddev_over_time(prediction_mean[24h] offset 1h) > 2
+        for: 30m
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "Prediction distribution shift"
+          description: "Significant shift in prediction distribution detected."
+
+  # ============================================================================
+  # Kafka Alerts
+  # ============================================================================
+  - name: kafka
+    interval: 30s
+    rules:
+      # High consumer lag
+      - alert: KafkaConsumerLag
+        expr: kafka_consumergroup_lag > 10000
+        for: 5m
+        labels:
+          severity: warning
+          team: data-platform
+        annotations:
+          summary: "Kafka consumer lag high"
+          description: "Consumer group '{{ $labels.consumergroup }}' on topic '{{ $labels.topic }}' has lag of {{ $value }}."
+          runbook_url: "https://wiki.company.com/runbooks/kafka-lag"
+
+      # Critical consumer lag
+      - alert: CriticalKafkaConsumerLag
+        expr: kafka_consumergroup_lag > 100000
+        for: 5m
+        labels:
+          severity: critical
+          team: data-platform
+        annotations:
+          summary: "Critical Kafka consumer lag"
+          description: "Consumer group '{{ $labels.consumergroup }}' lag is {{ $value }}. Data processing severely delayed."
+
+      # Consumer group not consuming
+      - alert: KafkaConsumerStalled
+        expr: |
+          increase(kafka_consumergroup_current_offset[10m]) == 0 
+          and kafka_consumergroup_lag > 0
+        for: 10m
+        labels:
+          severity: critical
+          team: data-platform
+        annotations:
+          summary: "Kafka consumer stalled"
+          description: "Consumer group '{{ $labels.consumergroup }}' has not consumed any messages in 10 minutes."
+
+      # Under-replicated partitions
+      - alert: KafkaUnderReplicatedPartitions
+        expr: kafka_topic_partition_under_replicated_partition > 0
+        for: 5m
+        labels:
+          severity: warning
+          team: data-platform
+        annotations:
+          summary: "Kafka under-replicated partitions"
+          description: "Topic '{{ $labels.topic }}' has {{ $value }} under-replicated partitions."
+
+  # ============================================================================
+  # Service Availability Alerts
+  # ============================================================================
+  - name: service_availability
+    interval: 15s
+    rules:
+      # Service down
+      - alert: ServiceDown
+        expr: up{job=~"predict-service|rag-service|mlflow"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: ml-platform
+        annotations:
+          summary: "Service is down"
+          description: "{{ $labels.job }} has been down for more than 2 minutes."
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: |
+          (container_memory_usage_bytes / container_spec_memory_limit_bytes) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "High memory usage"
+          description: "Container {{ $labels.container }} is using {{ $value | humanizePercentage }} of memory limit."
+
+      # Pod restarts
+      - alert: PodRestartingFrequently
+        expr: increase(kube_pod_container_status_restarts_total[1h]) > 3
+        for: 0m
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "Pod restarting frequently"
+          description: "Pod {{ $labels.pod }} has restarted {{ $value }} times in the last hour."
+
+  # ============================================================================
+  # Data Freshness Alerts
+  # ============================================================================
+  - name: data_freshness
+    interval: 60s
+    rules:
+      # Stale training data
+      - alert: StaleTrainingData
+        expr: (time() - last_training_data_timestamp) > 86400
+        for: 1h
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "Training data is stale"
+          description: "Last training data update was {{ $value | humanizeDuration }} ago."
+
+      # Feature store lag
+      - alert: FeatureStoreLag
+        expr: feature_store_sync_lag_seconds > 3600
+        for: 15m
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "Feature store sync lag"
+          description: "Feature store is {{ $value | humanizeDuration }} behind."
+
+  # ============================================================================
+  # Agent Alerts
+  # ============================================================================
+  - name: agent
+    interval: 30s
+    rules:
+      # Agent action failures
+      - alert: AgentActionFailures
+        expr: |
+          sum(rate(agent_action_total{status="failed"}[5m])) 
+          / sum(rate(agent_action_total[5m])) 
+          > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "High agent action failure rate"
+          description: "Agent action failure rate is {{ $value | humanizePercentage }}."
+
+      # Agent execution time
+      - alert: SlowAgentExecution
+        expr: histogram_quantile(0.95, sum(rate(agent_execution_duration_seconds_bucket[5m])) by (le)) > 60
+        for: 10m
+        labels:
+          severity: warning
+          team: ml-platform
+        annotations:
+          summary: "Slow agent execution"
+          description: "P95 agent execution time is {{ $value | humanizeDuration }}."

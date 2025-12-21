@@ -1,0 +1,98 @@
+{
+    "version": "1.0",
+    "description": "Agent policy configuration for auto-retrain DAG",
+    "drift_detection": {
+        "enabled": true,
+        "metric_name": "model_drift_score",
+        "prometheus_url": "http://localhost:9090",
+        "threshold": 0.1,
+        "check_interval_minutes": 30,
+        "min_samples_before_alert": 3
+    },
+    "thresholds": {
+        "drift_warning": 0.08,
+        "drift_critical": 0.1,
+        "performance_degradation": 0.05,
+        "latency_p99_ms": 500
+    },
+    "allowed_actions": [
+        {
+            "name": "alert",
+            "description": "Send notification without retraining",
+            "requires_confirmation": false,
+            "channels": [
+                "slack",
+                "email"
+            ]
+        },
+        {
+            "name": "retrain",
+            "description": "Trigger model retraining pipeline",
+            "requires_confirmation": true,
+            "cooldown_hours": 24
+        },
+        {
+            "name": "promote",
+            "description": "Promote model to production after validation",
+            "requires_confirmation": true,
+            "validation_required": true
+        },
+        {
+            "name": "rollback",
+            "description": "Rollback to previous model version",
+            "requires_confirmation": true
+        }
+    ],
+    "validation": {
+        "enabled": true,
+        "min_accuracy": 0.85,
+        "max_mape": 15.0,
+        "max_latency_ms": 100,
+        "min_test_coverage": 0.80,
+        "required_tests": [
+            "tests/test_model_inference.py",
+            "tests/test_model_performance.py"
+        ]
+    },
+    "retraining": {
+        "spark_job": {
+            "application": "spark_jobs/retrain_model.py",
+            "master": "yarn",
+            "deploy_mode": "cluster",
+            "executor_memory": "4g",
+            "executor_cores": 2,
+            "num_executors": 4
+        },
+        "training_script": "models/forecasting/train_forecast.py",
+        "data_path": "data/lake/delta/features",
+        "model_output_path": "models/output",
+        "mlflow_experiment": "auto-retrain-pipeline"
+    },
+    "notifications": {
+        "slack": {
+            "enabled": true,
+            "webhook_url": "${SLACK_WEBHOOK_URL}",
+            "channel": "#ml-alerts",
+            "mention_on_critical": [
+                "@ml-team"
+            ]
+        },
+        "email": {
+            "enabled": false,
+            "recipients": [
+                "ml-team@company.com"
+            ]
+        }
+    },
+    "schedule": {
+        "dag_schedule": "0 */6 * * *",
+        "sensor_timeout_hours": 1,
+        "task_timeout_minutes": 60
+    },
+    "safety": {
+        "max_retrains_per_day": 2,
+        "require_manual_approval_after_failures": 3,
+        "dry_run_mode": false,
+        "audit_logging": true
+    }
+}

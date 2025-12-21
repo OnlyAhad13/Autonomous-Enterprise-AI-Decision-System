@@ -1,0 +1,147 @@
+# Docker Compose - Prediction Service
+# Scalable deployment with load balancing
+
+version: '3.8'
+
+services:
+  # ==========================================================================
+  # Prediction API Service
+  # ==========================================================================
+  predict-api:
+    build:
+      context: .
+      dockerfile: services/predict/Dockerfile
+      target: production
+    image: predict-service:latest
+    container_name: predict-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - WORKERS=4
+      - MODEL_PATH=/app/models/output/model.pkl
+      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI:-http://mlflow:5000}
+      - MODEL_NAME=${MODEL_NAME:-forecasting-model}
+      - MODEL_STAGE=${MODEL_STAGE:-Production}
+      - EXPLAIN_SERVICE_URL=http://explain-api:8003
+      - MAX_BATCH_SIZE=10000
+      - REQUEST_TIMEOUT=30
+    volumes:
+      - ./models:/app/models:ro
+      - ./conf:/app/conf:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - ml-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ==========================================================================
+  # Prediction API - Scaled Replicas
+  # ==========================================================================
+  predict-api-replica:
+    build:
+      context: .
+      dockerfile: services/predict/Dockerfile
+      target: production
+    image: predict-service:latest
+    environment:
+      - PORT=8000
+      - WORKERS=2
+      - MODEL_PATH=/app/models/output/model.pkl
+      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI:-http://mlflow:5000}
+    volumes:
+      - ./models:/app/models:ro
+    restart: unless-stopped
+    networks:
+      - ml-network
+    deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+
+  # ==========================================================================
+  # Nginx Load Balancer
+  # ==========================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: predict-lb
+    ports:
+      - "80:80"
+    volumes:
+      - ./services/predict/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - predict-api
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+  # ==========================================================================
+  # Explain Service (SHAP/LIME)
+  # ==========================================================================
+  explain-api:
+    build:
+      context: .
+      dockerfile: services/predict/Dockerfile
+      target: production
+    container_name: explain-api
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - WORKERS=2
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+  # ==========================================================================
+  # MLflow Model Registry
+  # ==========================================================================
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.9.2
+    container_name: mlflow-server
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_TRACKING_URI=/mlruns
+    volumes:
+      - mlflow-data:/mlruns
+    command: mlflow server --host 0.0.0.0 --port 5000
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+  # ==========================================================================
+  # Prometheus (Metrics)
+  # ==========================================================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    restart: unless-stopped
+    networks:
+      - ml-network
+
+networks:
+  ml-network:
+    driver: bridge
+
+volumes:
+  mlflow-data:
