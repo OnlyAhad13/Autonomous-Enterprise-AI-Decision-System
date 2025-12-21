@@ -1,21 +1,19 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/🚀_Enterprise_AI-Decision_System-blueviolet?style=for-the-badge&labelColor=000000" alt="Enterprise AI"/>
+# 🚀 Autonomous Enterprise AI Decision System
+### *Production-Grade ML Platform with Self-Healing Capabilities*
+
+<br/>
+
+<a href="LICENSE"><img src="https://img.shields.io/badge/⚖️_License-MIT-00C853?style=for-the-badge&labelColor=1a1a2e" alt="License"/></a>
+<a href="https://python.org"><img src="https://img.shields.io/badge/🐍_Python-3.11+-00C853?style=for-the-badge&labelColor=1a1a2e" alt="Python"/></a>
+<a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/💅_Code_Style-Black-00C853?style=for-the-badge&labelColor=1a1a2e" alt="Code Style"/></a>
+<a href="https://github.com/OnlyAhad13/Autonomous-Enterprise-AI-Decision-System"><img src="https://img.shields.io/badge/✅_Build-Passing-00C853?style=for-the-badge&labelColor=1a1a2e" alt="Build"/></a>
 
 <br/><br/>
 
-[![Build](https://img.shields.io/github/actions/workflow/status/OnlyAhad13/Autonomous-Enterprise-AI-Decision-System/ci.yml?branch=main&style=flat-square&logo=github&label=CI&labelColor=1a1a2e&color=16c79a)](https://github.com/OnlyAhad13/Autonomous-Enterprise-AI-Decision-System/actions)
-[![License](https://img.shields.io/badge/license-MIT-16c79a?style=flat-square&labelColor=1a1a2e)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.11+-16c79a?style=flat-square&logo=python&logoColor=white&labelColor=1a1a2e)](https://python.org)
-[![Code Style](https://img.shields.io/badge/code_style-black-16c79a?style=flat-square&labelColor=1a1a2e)](https://github.com/psf/black)
-
-<br/>
-
-**Production-grade ML platform with autonomous agent orchestration, real-time inference, and self-healing capabilities.**
-
-<br/>
-
 ---
+
 
 ### 🛠️ Built With
 
