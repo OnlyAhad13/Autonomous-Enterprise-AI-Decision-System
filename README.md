@@ -40,7 +40,7 @@
 <br><b>PyTorch</b>
 </td>
 <td align="center" width="96">
-<img src="https://raw.githubusercontent.com/mlflow/mlflow/master/docs/source/_static/MLflow-logo-final-black.png" alt="MLflow" width="48" height="48"/>
+<img src="https://img.shields.io/badge/ML-flow-0194E2?style=for-the-badge&logo=mlflow&logoColor=white" alt="MLflow" height="28"/>
 <br><b>MLflow</b>
 </td>
 </tr>
