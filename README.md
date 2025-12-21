@@ -1,100 +1,161 @@
-# Autonomous Enterprise AI Decision System
+<div align="center">
 
-[![CI](https://github.com/your-org/enterprise-ai-decision-system/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/enterprise-ai-decision-system/actions/workflows/ci.yml)
+# 🚀 Autonomous Enterprise AI Decision System
+
+[![CI/CD](https://github.com/OnlyAhad13/Autonomous-Enterprise-AI-Decision-System/actions/workflows/deploy.yml/badge.svg)](https://github.com/OnlyAhad13/Autonomous-Enterprise-AI-Decision-System/actions)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-An enterprise-grade autonomous AI decision system that combines real-time data streaming, advanced ML pipelines, and intelligent agents for automated decision-making at scale.
+**Production-grade ML platform with autonomous agent orchestration, real-time inference, and self-healing capabilities.**
 
-## 🎯 Purpose
+[Quick Start](#-quick-start) • [Architecture](#-architecture) • [Features](#-features) • [Documentation](#-documentation) • [Contributing](#-contributing)
 
-This system enables organizations to:
+</div>
 
-- **Ingest** real-time data streams from multiple sources via Kafka
-- **Process** and transform data with Spark and Airflow orchestration
-- **Store** data in a Delta Lake with ACID guarantees
-- **Engineer** and serve features using Feast feature store
-- **Train** and track ML models with MLflow
-- **Serve** models at scale with FastAPI and Ray Serve
-- **Augment** decisions with vector similarity search
-- **Orchestrate** autonomous agents via LangChain for complex reasoning
+---
 
-## 🏗️ High-Level Architecture
+## 📋 Overview
 
-```mermaid
-graph TB
-    subgraph "Data Ingestion Layer"
-        A[External Sources] -->|Events| B[Kafka]
-    end
-    
-    subgraph "Processing Layer"
-        B --> C[Spark Streaming]
-        C --> D[Airflow DAGs]
-    end
-    
-    subgraph "Storage Layer"
-        D --> E[Delta Lake]
-    end
-    
-    subgraph "Feature Engineering"
-        E --> F[Feast Feature Store]
-    end
-    
-    subgraph "ML Platform"
-        F --> G[MLflow Training]
-        G --> H[Model Registry]
-    end
-    
-    subgraph "Serving Layer"
-        H --> I[Ray Serve]
-        I --> J[FastAPI Gateway]
-    end
-    
-    subgraph "Intelligence Layer"
-        J --> K[Vector DB]
-        K --> L[LangChain Agent]
-        L --> M[Decisions & Actions]
-    end
-    
-    style A fill:#e1f5fe
-    style B fill:#fff3e0
-    style C fill:#fff3e0
-    style D fill:#fff3e0
-    style E fill:#e8f5e9
-    style F fill:#fce4ec
-    style G fill:#f3e5f5
-    style H fill:#f3e5f5
-    style I fill:#e8eaf6
-    style J fill:#e8eaf6
-    style K fill:#fff8e1
-    style L fill:#ffebee
-    style M fill:#e0f2f1
-```
+The **Autonomous Enterprise AI Decision System** is a comprehensive MLOps platform designed for production environments at scale. It combines real-time ML inference, autonomous agent-driven operations, and robust data pipelines into a unified system.
 
-## 📁 Repository Structure
+### Key Capabilities
+
+| Capability | Description |
+|------------|-------------|
+| 🤖 **Autonomous Agents** | LLM-orchestrated agents with ReAct reasoning, tool execution, and human-in-the-loop confirmation |
+| 📊 **Real-time Inference** | FastAPI prediction service with P99 < 200ms latency at 1000+ RPS |
+| 🔄 **Auto-Retraining** | Drift-detection driven retraining with Airflow DAGs and MLflow promotion |
+| 📚 **RAG Pipeline** | Vector-based retrieval with FAISS/Milvus for contextual AI responses |
+| 🌊 **Stream Processing** | Kafka + Spark Structured Streaming for real-time feature engineering |
+| 📈 **Full Observability** | Prometheus metrics, Grafana dashboards, and structured audit logging |
+
+---
+
+## 🏗 Architecture
 
 ```
-.
-├── services/
-│   ├── data-ingestion/      # Kafka producers and consumers
-│   ├── data-processing/     # Spark jobs and Airflow DAGs
-│   ├── data-lake/           # Delta Lake configurations
-│   ├── feature-store/       # Feast feature definitions
-│   ├── ml-platform/         # MLflow experiments and training
-│   ├── serving/             # FastAPI and Ray Serve endpoints
-│   ├── vector-db/           # Vector database integrations
-│   └── agent/               # LangChain agent orchestration
-├── infra/
-│   └── terraform/           # Infrastructure as Code
-├── deploy/
-│   └── k8s/                 # Kubernetes manifests
-├── docs/
-│   └── ARCHITECTURE.md      # Detailed architecture documentation
-├── tests/                   # Integration and e2e tests
-└── .github/
-    ├── workflows/           # CI/CD pipelines
-    └── ISSUE_TEMPLATE/      # Issue templates
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              ENTERPRISE AI PLATFORM                              │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                  │
+│  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐          │
+│  │   Data Sources   │───▶│  Kafka Streams   │───▶│  Spark Streaming │          │
+│  │  (APIs, DBs, S3) │    │  (events.raw.v1) │    │  (Transformation) │          │
+│  └──────────────────┘    └──────────────────┘    └────────┬─────────┘          │
+│                                                            │                     │
+│                                                            ▼                     │
+│  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐          │
+│  │   Feature Store  │◀───│    Delta Lake    │◀───│ Feature Pipeline │          │
+│  │     (Feast)      │    │   (Bronze→Gold)  │    │ (Great Expectations)│       │
+│  └────────┬─────────┘    └──────────────────┘    └──────────────────┘          │
+│           │                                                                      │
+│           ▼                                                                      │
+│  ┌──────────────────────────────────────────────────────────────────┐          │
+│  │                        ML SERVICES                                 │          │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │          │
+│  │  │   Predict   │  │     RAG     │  │   Explain   │              │          │
+│  │  │   Service   │  │   Service   │  │   Service   │              │          │
+│  │  │  (FastAPI)  │  │  (FAISS)    │  │   (SHAP)    │              │          │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘              │          │
+│  └──────────────────────────────────────────────────────────────────┘          │
+│                                    │                                             │
+│                                    ▼                                             │
+│  ┌──────────────────────────────────────────────────────────────────┐          │
+│  │                      AUTONOMOUS AGENT LAYER                       │          │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │          │
+│  │  │  Agent Core │  │    Tools    │  │  Prompts    │              │          │
+│  │  │ (ReAct Loop)│  │(MLflow,Kafka│  │ (Few-shot)  │              │          │
+│  │  │             │  │ Airflow,etc)│  │             │              │          │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘              │          │
+│  └──────────────────────────────────────────────────────────────────┘          │
+│                                    │                                             │
+│                                    ▼                                             │
+│  ┌──────────────────────────────────────────────────────────────────┐          │
+│  │                    MLOPS & ORCHESTRATION                          │          │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │          │
+│  │  │   MLflow    │  │   Airflow   │  │ Prometheus  │              │          │
+│  │  │  (Registry) │  │   (DAGs)    │  │  (Metrics)  │              │          │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘              │          │
+│  └──────────────────────────────────────────────────────────────────┘          │
+│                                                                                  │
+└─────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## ✨ Features
+
+### 🤖 Autonomous Agent System
+
+- **ReAct Reasoning Loop**: Think → Act → Observe cycle with LLM orchestration
+- **Tool Integration**: MLflow, Airflow, Kafka, Prometheus, Slack
+- **Human-in-the-Loop**: Confirmation protocol for destructive actions
+- **Retry Policy**: Exponential backoff with jitter and circuit breaker patterns
+
+```python
+from agents.agent_core import AgentCore
+
+agent = AgentCore(llm_client=openai_client)
+result = await agent.run_drift_check_and_retrain(
+    model_name="forecasting-model",
+    drift_threshold=0.1,
+)
+```
+
+### 📊 Prediction Service
+
+- **High Performance**: P99 latency < 200ms, 1000+ RPS
+- **Batch Processing**: CSV upload with async processing
+- **Explainability**: SHAP/LIME feature importance
+- **Auto-scaling**: HPA with CPU/memory-based scaling
+
+```bash
+# Single prediction
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"features": {"age": 35, "income": 75000}}'
+
+# Batch prediction
+curl -X POST http://localhost:8000/batch_predict \
+  -F "file=@data.csv"
+```
+
+### 🔄 Auto-Retraining Pipeline
+
+- **Drift Detection**: Prometheus-based monitoring with configurable thresholds
+- **Agent Decision**: LLM evaluates drift and recommends action
+- **Conditional Training**: Spark or Python training based on data size
+- **Auto-Promotion**: MLflow model staging with validation gates
+
+```python
+# Airflow DAG Flow
+Drift Sensor → Agent Decision → Branch
+                                  ├── Spark Training (large data)
+                                  ├── Python Training (small data)
+                                  └── Skip (no drift)
+                                        ↓
+                              Validation → MLflow Promotion → Slack Notification
+```
+
+### 📚 RAG Pipeline
+
+- **Document Ingestion**: Markdown, PDF, code file support
+- **Vector Store**: FAISS (local) or Milvus (distributed)
+- **Semantic Search**: Sentence Transformers embeddings
+- **Context Retrieval**: Top-k relevant chunks for LLM context
+
+```python
+from services.rag.retriever import RAGRetriever
+
+retriever = RAGRetriever()
+response = retriever.query(
+    "How does the model handle missing features?",
+    top_k=5,
+)
+```
+
+---
 
 ## 🚀 Quick Start
 
@@ -102,126 +163,327 @@ graph TB
 
 - Python 3.11+
 - Docker & Docker Compose
-- Poetry (dependency management)
+- 8GB+ RAM
 
-### Setup Development Environment
+### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/enterprise-ai-decision-system.git
-cd enterprise-ai-decision-system
+# Clone repository
+git clone https://github.com/OnlyAhad13/Autonomous-Enterprise-AI-Decision-System.git
+cd Autonomous-Enterprise-AI-Decision-System
 
-# Initialize git (if starting fresh)
-git init
-
-# Install Poetry (if not installed)
-curl -sSL https://install.python-poetry.org | python3 -
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 
 # Install dependencies
-poetry install
+pip install -r requirements.txt
 
-# Install pre-commit hooks
-poetry run pre-commit install
-
-# Run linting
-poetry run ruff check .
-poetry run mypy .
-
-# Run tests
-poetry run pytest
+# Optional: Install development dependencies
+pip install -e ".[dev]"
 ```
 
-### Running Services Locally
+### Run Services
 
 ```bash
-# Start infrastructure (Kafka, databases, etc.)
-docker-compose up -d
+# Start all services (prediction, RAG, monitoring)
+docker-compose -f docker-compose.predict.yml up -d
+docker-compose -f docker-compose.monitoring.yml up -d
 
-# Run specific service
-cd services/<service-name>
-poetry run python main.py
+# Or run prediction service locally
+cd services/predict
+uvicorn app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-## 🛠️ Technology Stack
+### Verify Installation
 
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| Ingestion | Apache Kafka | Real-time event streaming |
-| Processing | Apache Spark | Distributed data processing |
-| Orchestration | Apache Airflow | Workflow orchestration |
-| Storage | Delta Lake | ACID-compliant data lake |
-| Features | Feast | Feature store and serving |
-| ML Platform | MLflow | Experiment tracking, model registry |
-| Model Serving | Ray Serve | Scalable model deployment |
-| API Gateway | FastAPI | High-performance REST APIs |
-| Vector Search | Pinecone/Milvus | Similarity search |
-| Agent Framework | LangChain | LLM-powered autonomous agents |
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Run tests
+pytest tests/ -v --tb=short
+
+# Run load tests
+pip install locust
+locust -f perf/locustfile.py --host=http://localhost:8000
+```
+
+---
+
+## 📁 Project Structure
+
+```
+├── agents/                    # Autonomous agent system
+│   ├── agent_core.py         # ReAct loop orchestration
+│   ├── tools/                # MLflow, Kafka, Airflow, Prometheus, Slack
+│   └── prompts/              # System prompts, few-shot examples
+│
+├── services/                  # Microservices
+│   ├── predict/              # FastAPI prediction service
+│   └── rag/                  # RAG retrieval service
+│
+├── ingest/                    # Data ingestion
+│   └── dags/                 # Airflow DAGs (auto-retrain)
+│
+├── spark_jobs/               # Spark streaming & batch
+│   └── streaming_to_delta.py
+│
+├── features/                  # Feature engineering
+│   ├── feature_store.py      # Feast integration
+│   └── transformers.py
+│
+├── models/                    # Model training
+│   ├── train_forecast.py     # Prophet, LSTM, ETS
+│   └── optuna_study.py       # Hyperparameter tuning
+│
+├── mlflow_utils/             # MLflow utilities
+│   ├── auto_promote.py       # Model promotion
+│   └── cli.py                # CLI tools
+│
+├── conf/                      # Configuration
+│   ├── prometheus.yml        # Prometheus scrape config
+│   ├── alerting_rules.yml    # Alert rules
+│   └── alertmanager.yml      # Alertmanager routing
+│
+├── deploy/                    # Deployment
+│   └── helm/                 # Helm charts (predict, rag)
+│
+├── infra/                     # Infrastructure
+│   └── terraform/            # EKS, MSK, RDS
+│
+├── tests/                     # Test suites
+│   ├── e2e/                  # End-to-end tests
+│   └── chaos/                # Chaos engineering
+│
+├── perf/                      # Performance testing
+│   └── locustfile.py         # Load tests
+│
+├── docs/                      # Documentation
+│   ├── SECURITY.md           # Security guide
+│   └── COST_ESTIMATE.md      # AWS/GCP costs
+│
+└── notebooks/                 # Jupyter notebooks
+    ├── 01_EDA.ipynb
+    ├── 02_baselines.ipynb
+    └── 04_rag_demo.ipynb
+```
+
+---
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MLFLOW_TRACKING_URI` | MLflow server URL | `http://localhost:5000` |
+| `KAFKA_BOOTSTRAP_SERVERS` | Kafka brokers | `localhost:9092` |
+| `OPENAI_API_KEY` | OpenAI API key | Required for agents |
+| `SLACK_WEBHOOK_URL` | Slack notifications | Optional |
+| `MODEL_NAME` | Model to serve | `forecasting-model` |
+
+### Agent Policy (`conf/agent_policy.json`)
+
+```json
+{
+  "drift": {
+    "threshold": 0.1,
+    "metric_name": "model_drift_score"
+  },
+  "actions": {
+    "allowed": ["alert", "retrain", "promote", "rollback"],
+    "require_confirmation": ["rollback"]
+  },
+  "safety": {
+    "max_retrains_per_day": 3,
+    "dry_run_mode": false
+  }
+}
+```
+
+---
+
+## 📈 Observability
+
+### Metrics
+
+Access Grafana dashboards at `http://localhost:3000` (admin/admin)
+
+| Dashboard | Metrics |
+|-----------|---------|
+| ML Platform | P50/P95/P99 latency, error rate, throughput |
+| Model Drift | Drift score, feature distributions |
+| Agent Actions | Action counts, execution time |
+| Infrastructure | CPU, memory, Kafka lag |
+
+### Alerting
+
+| Alert | Threshold | Severity |
+|-------|-----------|----------|
+| HighPredictionLatency | P99 > 500ms | Warning |
+| ModelDriftDetected | drift > 0.1 | Warning |
+| CriticalKafkaLag | lag > 100k | Critical |
+
+---
+
+## 🧪 Testing
+
+```bash
+# Unit tests
+pytest tests/ -v --cov=. --cov-report=html
+
+# E2E tests (requires Docker)
+docker-compose -f tests/e2e/docker-compose.e2e.yml up -d
+E2E_MODE=true pytest tests/e2e/ -v
+
+# Chaos tests
+pytest tests/chaos/ -v
+
+# Load tests
+locust -f perf/locustfile.py --host=http://localhost:8000 \
+  --users=100 --spawn-rate=10 --run-time=5m --headless
+```
+
+---
+
+## 🚢 Deployment
+
+### Kubernetes (Helm)
+
+```bash
+# Deploy prediction service
+helm upgrade --install predict ./deploy/helm/predict \
+  --namespace ml-services \
+  --set image.tag=latest \
+  --set replicaCount=3
+
+# Deploy RAG service
+helm upgrade --install rag ./deploy/helm/rag \
+  --namespace ml-services
+```
+
+### Terraform (AWS)
+
+```bash
+cd infra/terraform
+terraform init
+terraform plan -var="environment=production"
+terraform apply
+```
+
+### CI/CD (GitHub Actions)
+
+The pipeline automatically:
+1. Runs unit tests
+2. Builds Docker images
+3. Pushes to GHCR
+4. Deploys to staging
+5. Deploys to production (with approval)
+
+---
+
+## 💰 Cost Estimates
+
+| Environment | AWS | GCP |
+|-------------|-----|-----|
+| Staging | ~$320/month | ~$305/month |
+| Production | ~$1,910/month | ~$1,590/month |
+
+See [docs/COST_ESTIMATE.md](docs/COST_ESTIMATE.md) for detailed breakdown.
+
+---
+
+## 🔒 Security
+
+- **Encryption**: TLS 1.3 in transit, AES-256 at rest (KMS)
+- **RBAC**: Feature store, MLflow, Kubernetes access control
+- **PII Masking**: Pseudonymization in pipelines
+- **Audit Logging**: Structured logs for all agent actions
+
+See [docs/SECURITY.md](docs/SECURITY.md) for security guidelines.
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [SECURITY.md](docs/SECURITY.md) | Security architecture |
+| [COST_ESTIMATE.md](docs/COST_ESTIMATE.md) | Infrastructure costs |
+| [infra/README.md](infra/README.md) | Operator guide |
+| [conf/MONITORING.md](conf/MONITORING.md) | Observability setup |
+
+---
+
+## 🛠 Development
+
+### Setup
+
+```bash
+# Install pre-commit hooks
+pip install pre-commit
+pre-commit install
+
+# Run formatters
+black .
+isort .
+
+# Run linters
+flake8 .
+mypy .
+```
+
+### Adding a New Tool
+
+```python
+# agents/tools/tool_custom.py
+from agents.tools.base import BaseTool, ToolResult
+
+class CustomTool(BaseTool):
+    def execute(self, **kwargs) -> ToolResult:
+        # Implementation
+        return ToolResult(success=True, data=result)
+```
+
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these guidelines:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### Development Workflow
+### Code Standards
 
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
-3. **Make** your changes following our coding standards
-4. **Test** your changes: `poetry run pytest`
-5. **Lint** your code: `poetry run ruff check . && poetry run mypy .`
-6. **Commit** using conventional commits: `git commit -m 'feat: add amazing feature'`
-7. **Push** to your fork: `git push origin feature/amazing-feature`
-8. **Open** a Pull Request
+- **Style**: Black (line length 100), isort
+- **Types**: Full type annotations
+- **Tests**: >80% coverage required
+- **Docs**: Docstrings for public APIs
 
-### Coding Standards
-
-- Follow [PEP 8](https://peps.python.org/pep-0008/) style guide
-- Use type hints for all functions
-- Write docstrings for public APIs
-- Maintain test coverage above 80%
-- Use conventional commits for commit messages
-
-### Code Review Process
-
-- All PRs require at least one approval
-- CI must pass before merging
-- Squash merge to main branch
-
-## 📋 Issue Templates
-
-Use our issue templates for:
-- 🐛 [Bug Reports](.github/ISSUE_TEMPLATE/bug_report.md)
-- ✨ [Feature Requests](.github/ISSUE_TEMPLATE/feature_request.md)
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file.
 
-```
-MIT License
+---
 
-Copyright (c) 2024 Your Organization
+## 🙏 Acknowledgments
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+- [MLflow](https://mlflow.org/) - Model registry and tracking
+- [Apache Kafka](https://kafka.apache.org/) - Event streaming
+- [FastAPI](https://fastapi.tiangolo.com/) - API framework
+- [Prometheus](https://prometheus.io/) - Monitoring
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+---
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+<div align="center">
 
-## 📞 Support
+**Built with ❤️ for production ML at scale**
 
-- 📖 [Documentation](docs/)
-- 💬 [Discussions](https://github.com/OnlyAhad13/autonomous-enterprise-ai-decision-system/discussions)
-- 🐛 [Issue Tracker](https://github.com/OnlyAhad13/autonomous-enterprise-ai-decision-system/issues)
+[⬆ Back to Top](#-autonomous-enterprise-ai-decision-system)
+
+</div>
