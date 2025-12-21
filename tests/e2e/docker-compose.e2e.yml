@@ -1,0 +1,116 @@
+# E2E Test Infrastructure
+# Kafka + Delta + MLflow minimal setup
+
+version: '3.8'
+
+services:
+  # ==========================================================================
+  # Kafka (Minimal)
+  # ==========================================================================
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: e2e-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: e2e-kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  # ==========================================================================
+  # MLflow
+  # ==========================================================================
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.9.2
+    container_name: e2e-mlflow
+    ports:
+      - "15000:5000"
+    environment:
+      MLFLOW_TRACKING_URI: /mlruns
+    volumes:
+      - mlflow-data:/mlruns
+    command: mlflow server --host 0.0.0.0 --port 5000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================================================
+  # Prediction Service
+  # ==========================================================================
+  predict-api:
+    build:
+      context: ../..
+      dockerfile: services/predict/Dockerfile
+      target: production
+    container_name: e2e-predict
+    ports:
+      - "18000:8000"
+    environment:
+      PORT: "8000"
+      WORKERS: "1"
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================================================
+  # Test Runner
+  # ==========================================================================
+  test-runner:
+    build:
+      context: ../..
+      dockerfile: tests/e2e/Dockerfile.test
+    container_name: e2e-test-runner
+    volumes:
+      - ../..:/app
+      - delta-data:/app/data/delta
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      PREDICT_API_URL: http://predict-api:8000
+      E2E_MODE: "true"
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mlflow:
+        condition: service_healthy
+      predict-api:
+        condition: service_healthy
+
+networks:
+  default:
+    name: e2e-network
+
+volumes:
+  mlflow-data:
+  delta-data:
