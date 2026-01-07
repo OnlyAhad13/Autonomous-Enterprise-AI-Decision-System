@@ -43,10 +43,6 @@
 <img src="https://img.shields.io/badge/ML-flow-0194E2?style=for-the-badge&logo=mlflow&logoColor=white" alt="MLflow" height="28"/>
 <br><b>MLflow</b>
 </td>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" alt="Redis" width="48" height="48"/>
-<br><b>Redis</b>
-</td>
 </tr>
 <tr>
 <td align="center" width="96">
@@ -69,7 +65,11 @@
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" width="48" height="48"/>
 <br><b>GitHub</b>
 </td>
-<tr>
+<td align="center" width="96">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" alt="Redis" width="48" height="48"/>
+<br><b>Redis</b>
+</td>
+</tr>
 <td align="center" width="96">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker" width="48" height="48"/>
 <br><b>Docker</b>
