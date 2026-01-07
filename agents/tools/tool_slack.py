@@ -225,11 +225,37 @@ class SlackTool:
                     )
             
             else:
-                # Mock mode - just log the message
-                logger.info(f"[MOCK SLACK] {payload}")
+                # No webhook/token - send to in-app notifications instead
+                logger.info(f"[IN-APP] Sending to notifications: {payload}")
+                
+                # Try to send to in-app notification system
+                try:
+                    from webapp.routers.notifications import add_notification, add_report
+                    
+                    # Check if this is a report (has attachments)
+                    if "attachments" in payload:
+                        attachment = payload["attachments"][0]
+                        sections = [
+                            {"title": f.get("title", ""), "value": f.get("value", "")}
+                            for f in attachment.get("fields", [])
+                        ]
+                        add_report(
+                            title=attachment.get("title", "Report"),
+                            sections=sections,
+                        )
+                    else:
+                        # Simple message
+                        add_notification(
+                            type="info",
+                            title="Agent Message",
+                            message=payload.get("text", ""),
+                        )
+                except ImportError:
+                    pass
+                
                 return ToolResult(
                     success=True,
-                    data={"mock": True, "payload": payload},
+                    data={"sent_to": "in-app notifications", "payload": payload},
                 )
                 
         except requests.RequestException as e:

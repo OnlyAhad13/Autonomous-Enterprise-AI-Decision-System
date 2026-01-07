@@ -154,3 +154,15 @@ infra/plugins/
 
 # SQLite databases
 *.db
+
+# Frontend (Vite/React)
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.*
+frontend/.vite/
+
+# Additional Data
+mlflow.db
+data/models/*.pkl
+data/models/*.joblib

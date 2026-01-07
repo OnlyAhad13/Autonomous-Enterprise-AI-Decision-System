@@ -376,7 +376,7 @@ class AgentCore:
                 description="Query Prometheus metrics using PromQL",
                 function=self._tool_query_metrics,
                 requires_confirmation=False,
-                parameters={"promql": "PromQL query string"},
+                parameters={"query": "PromQL query string (or use 'promql')"},
             ),
             "get_alerts": ToolSpec(
                 name="get_alerts",
@@ -397,6 +397,13 @@ class AgentCore:
                 function=self._tool_trigger_retrain,
                 requires_confirmation=True,
                 parameters={"dag_id": "DAG ID (default: retrain)"},
+            ),
+            "train_model": ToolSpec(
+                name="train_model",
+                description="Train a model on live event data. Uses events from the ingestion buffer to train ML models and logs to MLflow.",
+                function=self._tool_train_model,
+                requires_confirmation=True,
+                parameters={"model_type": "Model type: random_forest, gradient_boosting, or logistic_regression"},
             ),
             "get_dag_status": ToolSpec(
                 name="get_dag_status",
@@ -425,10 +432,12 @@ class AgentCore:
     # Tool Implementations
     # ========================================================================
     
-    def _tool_query_metrics(self, promql: str) -> ToolResult:
+    def _tool_query_metrics(self, promql: str = None, query: str = None) -> ToolResult:
         """Query Prometheus metrics."""
+        # Accept either 'promql' or 'query' parameter from LLM
+        query_str = promql or query or ""
         return self.retry_policy.execute_with_retry(
-            self.prometheus.query, promql
+            self.prometheus.query, query_str
         )
     
     def _tool_get_alerts(self) -> ToolResult:
@@ -482,6 +491,66 @@ class AgentCore:
         return self.retry_policy.execute_with_retry(
             self.airflow.trigger_dag, dag_id, conf
         )
+    
+    def _tool_train_model(
+        self,
+        model_type: str = "random_forest",
+    ) -> ToolResult:
+        """Train a model on live event data from the ingestion buffer."""
+        try:
+            # Import the live trainer
+            from models.live_train import LiveModelTrainer
+            
+            # Get events from the webapp ingestion buffer if available
+            events = []
+            try:
+                from webapp.routers.ingestion import event_buffer
+                events = list(event_buffer)
+            except ImportError:
+                pass
+            
+            # Fallback: generate sample events if buffer is empty
+            if len(events) < 50:
+                import random
+                from datetime import datetime
+                
+                event_types = ["order_placed", "page_view", "purchase", "add_to_cart", "checkout_started"]
+                for i in range(200):
+                    events.append({
+                        "id": f"train_evt_{i}",
+                        "timestamp": datetime.now().isoformat(),
+                        "value": {
+                            "event_type": random.choice(event_types),
+                            "price": round(random.uniform(10, 500), 2),
+                            "quantity": random.randint(1, 5),
+                            "user_id": f"U{random.randint(1000, 9999)}",
+                            "product_id": f"P{random.randint(100, 999)}",
+                        }
+                    })
+            
+            # Train the model
+            trainer = LiveModelTrainer()
+            result = trainer.train_event_classifier(events, model_type)
+            
+            return ToolResult(
+                success=True,
+                data={
+                    "model_type": result["model_type"],
+                    "accuracy": result["metrics"]["accuracy"],
+                    "f1_score": result["metrics"]["f1_weighted"],
+                    "num_samples": result["metrics"]["num_samples"],
+                    "mlflow_run_id": result["mlflow_run_id"],
+                    "model_path": result["model_path"],
+                    "classes": result["classes"],
+                },
+            )
+            
+        except Exception as e:
+            return ToolResult(
+                success=False,
+                data=None,
+                error=f"Training failed: {str(e)}",
+            )
     
     def _tool_get_dag_status(self, dag_id: str) -> ToolResult:
         """Get DAG status."""

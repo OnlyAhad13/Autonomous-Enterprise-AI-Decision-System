@@ -1,19 +1,19 @@
 <div align="center">
 
 # 🚀 Autonomous Enterprise AI Decision System
-### *Production-Grade ML Platform with Self-Healing Capabilities*
+### *Production-Grade MLOps Platform with Self-Healing Capabilities*
 
 <br/>
 
 <a href="LICENSE"><img src="https://img.shields.io/badge/⚖️_License-MIT-00C853?style=for-the-badge&labelColor=1a1a2e" alt="License"/></a>
 <a href="https://python.org"><img src="https://img.shields.io/badge/🐍_Python-3.11+-00C853?style=for-the-badge&labelColor=1a1a2e" alt="Python"/></a>
+<a href="https://react.dev"><img src="https://img.shields.io/badge/⚛️_React-18.3+-61DAFB?style=for-the-badge&labelColor=1a1a2e" alt="React"/></a>
 <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/💅_Code_Style-Black-00C853?style=for-the-badge&labelColor=1a1a2e" alt="Code Style"/></a>
 <a href="https://github.com/OnlyAhad13/Autonomous-Enterprise-AI-Decision-System"><img src="https://img.shields.io/badge/✅_Build-Passing-00C853?style=for-the-badge&labelColor=1a1a2e" alt="Build"/></a>
 
 <br/><br/>
 
 ---
-
 
 ### 🛠️ Built With
 
@@ -28,16 +28,16 @@
 <br><b>FastAPI</b>
 </td>
 <td align="center" width="96">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" width="48" height="48"/>
+<br><b>React</b>
+</td>
+<td align="center" width="96">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apachekafka/apachekafka-original.svg" alt="Kafka" width="48" height="48"/>
 <br><b>Kafka</b>
 </td>
 <td align="center" width="96">
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Apache_Spark_logo.svg/512px-Apache_Spark_logo.svg.png" alt="Spark" width="48" height="48"/>
 <br><b>Spark</b>
-</td>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" alt="PyTorch" width="48" height="48"/>
-<br><b>PyTorch</b>
 </td>
 <td align="center" width="96">
 <img src="https://img.shields.io/badge/ML-flow-0194E2?style=for-the-badge&logo=mlflow&logoColor=white" alt="MLflow" height="28"/>
@@ -66,34 +66,8 @@
 <br><b>Grafana</b>
 </td>
 <td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" alt="AWS" width="48" height="48"/>
-<br><b>AWS</b>
-</td>
-</tr>
-<tr>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" width="48" height="48"/>
-<br><b>PostgreSQL</b>
-</td>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" alt="Redis" width="48" height="48"/>
-<br><b>Redis</b>
-</td>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/numpy/numpy-original.svg" alt="NumPy" width="48" height="48"/>
-<br><b>NumPy</b>
-</td>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg" alt="Pandas" width="48" height="48"/>
-<br><b>Pandas</b>
-</td>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub Actions" width="48" height="48"/>
-<br><b>Actions</b>
-</td>
-<td align="center" width="96">
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/OpenAI_Logo.svg/512px-OpenAI_Logo.svg.png" alt="OpenAI" width="48" height="48"/>
-<br><b>OpenAI</b>
+<br><b>GPT-4o</b>
 </td>
 </tr>
 </table>
@@ -108,18 +82,18 @@
 
 ## 📋 Overview
 
-The **Autonomous Enterprise AI Decision System** is a comprehensive MLOps platform designed for production environments at scale. It combines real-time ML inference, autonomous agent-driven operations, and robust data pipelines into a unified system.
+The **Autonomous Enterprise AI Decision System** is a unified platform bridging **Data Engineering, Data Science, AI Engineering, and Software Engineering**. It is designed to demonstrate a production-grade MLOps lifecycle where an autonomous agent manages the entire system—from data ingestion to model deployment.
 
 ### Key Capabilities
 
 | Capability | Description |
 |------------|-------------|
-| 🤖 **Autonomous Agents** | LLM-orchestrated agents with ReAct reasoning, tool execution, and human-in-the-loop confirmation |
+| 🤖 **Autonomous Agents** | LLM-orchestrated agents (GPT-4o) with tool execution (MLflow, Kafka, Docker) |
+| 🖥️ **Full-Stack Dashboard** | Modern React UI for monitoring events, managing models, and controlling the agent |
 | 📊 **Real-time Inference** | FastAPI prediction service with P99 < 200ms latency at 1000+ RPS |
-| 🔄 **Auto-Retraining** | Drift-detection driven retraining with Airflow DAGs and MLflow promotion |
-| 📚 **RAG Pipeline** | Vector-based retrieval with FAISS/Milvus for contextual AI responses |
-| 🌊 **Stream Processing** | Kafka + Spark Structured Streaming for real-time feature engineering |
-| 📈 **Full Observability** | Prometheus metrics, Grafana dashboards, and structured audit logging |
+| 🌊 **Stream Processing** | Kafka event streaming + Spark Structured Streaming for feature engineering |
+| 🧠 **Live Model Training** | Train models (Random Forest, GBM, etc.) on *live* streaming data with one click |
+| 📈 **Full Observability** | Prometheus metrics, Grafana dashboards, and In-App Notifications |
 
 ---
 
@@ -127,46 +101,27 @@ The **Autonomous Enterprise AI Decision System** is a comprehensive MLOps platfo
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              ENTERPRISE AI PLATFORM                              │
+│                           AUTONOMOUS AI PLATFORM                                 │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                  │
 │  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐          │
 │  │   Data Sources   │───▶│  Kafka Streams   │───▶│  Spark Streaming │          │
-│  │  (APIs, DBs, S3) │    │  (events.raw.v1) │    │  (Transformation) │          │
+│  │  (Event Streams) │    │  (events.raw.v1) │    │  (Feature Eng.)  │          │
 │  └──────────────────┘    └──────────────────┘    └────────┬─────────┘          │
 │                                                            │                     │
 │                                                            ▼                     │
 │  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐          │
-│  │   Feature Store  │◀───│    Delta Lake    │◀───│ Feature Pipeline │          │
-│  │     (Feast)      │    │   (Bronze→Gold)  │    │ (Great Expectations)│       │
-│  └────────┬─────────┘    └──────────────────┘    └──────────────────┘          │
-│           │                                                                      │
-│           ▼                                                                      │
-│  ┌──────────────────────────────────────────────────────────────────┐          │
-│  │                        ML SERVICES                                 │          │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │          │
-│  │  │   Predict   │  │     RAG     │  │   Explain   │              │          │
-│  │  │   Service   │  │   Service   │  │   Service   │              │          │
-│  │  │  (FastAPI)  │  │  (FAISS)    │  │   (SHAP)    │              │          │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘              │          │
-│  └──────────────────────────────────────────────────────────────────┘          │
-│                                    │                                             │
-│                                    ▼                                             │
+│  │   Frontend UI    │◀───│   Backend API    │◀───│   Live Trainer   │          │
+│  │  (React + Vite)  │    │    (FastAPI)     │    │ (Scikit + MLflow)│          │
+│  └──────────────────┘    └────────┬─────────┘    └──────────────────┘          │
+│                                   │                                              │
+│                                   ▼                                              │
 │  ┌──────────────────────────────────────────────────────────────────┐          │
 │  │                      AUTONOMOUS AGENT LAYER                       │          │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │          │
-│  │  │  Agent Core │  │    Tools    │  │  Prompts    │              │          │
-│  │  │ (ReAct Loop)│  │(MLflow,Kafka│  │ (Few-shot)  │              │          │
-│  │  │             │  │ Airflow,etc)│  │             │              │          │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘              │          │
-│  └──────────────────────────────────────────────────────────────────┘          │
-│                                    │                                             │
-│                                    ▼                                             │
-│  ┌──────────────────────────────────────────────────────────────────┐          │
-│  │                    MLOPS & ORCHESTRATION                          │          │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │          │
-│  │  │   MLflow    │  │   Airflow   │  │ Prometheus  │              │          │
-│  │  │  (Registry) │  │   (DAGs)    │  │  (Metrics)  │              │          │
+│  │  │  Agent Core │  │    Tools    │  │     LLM     │              │          │
+│  │  │ (ReAct Loop)│  │(MLflow,Kafka│  │   (GPT-4o)  │              │          │
+│  │  │             │  │ Docker, etc)│  │             │              │          │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘              │          │
 │  └──────────────────────────────────────────────────────────────────┘          │
 │                                                                                  │
@@ -177,128 +132,72 @@ The **Autonomous Enterprise AI Decision System** is a comprehensive MLOps platfo
 
 ## ✨ Features
 
+### 🖥️ Interactive Dashboard
+A full-featured React application providing real-time visibility into the system.
+- **Data Ingestion**: Watch live Kafka events flow in via WebSockets.
+- **Model Registry**: View MLflow models, compare metrics (Accuracy, F1).
+- **Training Panel**: Trigger training runs on live data with a single click.
+- **Agent Interface**: Chat with the autonomous agent to execute complex tasks.
+
 ### 🤖 Autonomous Agent System
+- **ReAct Reasoning Loop**: Think → Act → Observe cycle.
+- **Tool Integration**: Can restart containers, check logs, train models, deploys services.
+- **Self-Healing**: Detects failures (e.g., Kafka down) and attempts to restart services.
 
-- **ReAct Reasoning Loop**: Think → Act → Observe cycle with LLM orchestration
-- **Tool Integration**: MLflow, Airflow, Kafka, Prometheus, Slack
-- **Human-in-the-Loop**: Confirmation protocol for destructive actions
-- **Retry Policy**: Exponential backoff with jitter and circuit breaker patterns
+### 📊 Live Model Training
+- **Real-time Data**: Trains on the buffer of most recent events from Kafka.
+- **MLflow Integration**: Automatically logs parameters, metrics, and artifacts.
+- **One-Click Deploy**: Promote models to production instantly from the UI.
+- **Model Types**: Comparison of Random Forest, Gradient Boosting, and Logistic Regression.
 
-```python
-from agents.agent_core import AgentCore
-
-agent = AgentCore(llm_client=openai_client)
-result = await agent.run_drift_check_and_retrain(
-    model_name="forecasting-model",
-    drift_threshold=0.1,
-)
-```
-
-### 📊 Prediction Service
-
-- **High Performance**: P99 latency < 200ms, 1000+ RPS
-- **Batch Processing**: CSV upload with async processing
-- **Explainability**: SHAP/LIME feature importance
-- **Auto-scaling**: HPA with CPU/memory-based scaling
-
-```bash
-# Single prediction
-curl -X POST http://localhost:8000/predict \
-  -H "Content-Type: application/json" \
-  -d '{"features": {"age": 35, "income": 75000}}'
-
-# Batch prediction
-curl -X POST http://localhost:8000/batch_predict \
-  -F "file=@data.csv"
-```
-
-### 🔄 Auto-Retraining Pipeline
-
-- **Drift Detection**: Prometheus-based monitoring with configurable thresholds
-- **Agent Decision**: LLM evaluates drift and recommends action
-- **Conditional Training**: Spark or Python training based on data size
-- **Auto-Promotion**: MLflow model staging with validation gates
-
-```python
-# Airflow DAG Flow
-Drift Sensor → Agent Decision → Branch
-                                  ├── Spark Training (large data)
-                                  ├── Python Training (small data)
-                                  └── Skip (no drift)
-                                        ↓
-                              Validation → MLflow Promotion → Slack Notification
-```
-
-### 📚 RAG Pipeline
-
-- **Document Ingestion**: Markdown, PDF, code file support
-- **Vector Store**: FAISS (local) or Milvus (distributed)
-- **Semantic Search**: Sentence Transformers embeddings
-- **Context Retrieval**: Top-k relevant chunks for LLM context
-
-```python
-from services.rag.retriever import RAGRetriever
-
-retriever = RAGRetriever()
-response = retriever.query(
-    "How does the model handle missing features?",
-    top_k=5,
-)
-```
+### 🔔 In-App Notification System
+- **Real-time Alerts**: Success/Error toasts for all background actions.
+- **Action History**: Persistent notification center to track agent activities.
+- **No Slack Required**: Fully self-contained within the application.
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - Python 3.11+
+- Node.js 18+ & npm
 - Docker & Docker Compose
-- 8GB+ RAM
+- OpenAI API Key
 
-### Installation
-
+### 1. Start Infrastructure (Kafka, MLflow, Prometheus)
 ```bash
-# Clone repository
-git clone https://github.com/OnlyAhad13/Autonomous-Enterprise-AI-Decision-System.git
-cd Autonomous-Enterprise-AI-Decision-System
+# Start Core Infrastructure
+docker compose -f infra/docker-compose.kafka.yml up -d
+docker compose -f docker-compose.monitoring.yml up -d
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+# Start MLflow (Local)
+mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlflow.db
+```
 
-# Install dependencies
+### 2. Start Backend
+```bash
+# Install Python dependencies
 pip install -r requirements.txt
 
-# Optional: Install development dependencies
-pip install -e ".[dev]"
+# Run FastAPI Backend
+PYTHONPATH=. uvicorn webapp.main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
-### Run Services
-
+### 3. Start Frontend
 ```bash
-# Start all services (prediction, RAG, monitoring)
-docker-compose -f docker-compose.predict.yml up -d
-docker-compose -f docker-compose.monitoring.yml up -d
-
-# Or run prediction service locally
-cd services/predict
-uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+cd frontend
+npm install
+npm run dev
 ```
 
-### Verify Installation
-
+### 4. Start Live Data Producer
 ```bash
-# Health check
-curl http://localhost:8000/health
-
-# Run tests
-pytest tests/ -v --tb=short
-
-# Run load tests
-pip install locust
-locust -f perf/locustfile.py --host=http://localhost:8000
+# In the root directory
+python ingest/live_producer.py --rate 5
 ```
+
+Running these commands will spin up the entire platform. Access the dashboard at `http://localhost:5173`.
 
 ---
 
@@ -306,58 +205,33 @@ locust -f perf/locustfile.py --host=http://localhost:8000
 
 ```
 ├── agents/                    # Autonomous agent system
-│   ├── agent_core.py         # ReAct loop orchestration
-│   ├── tools/                # MLflow, Kafka, Airflow, Prometheus, Slack
-│   └── prompts/              # System prompts, few-shot examples
+│   ├── agent_core.py          # ReAct loop orchestration
+│   ├── tools/                 # Agent tools (MLflow, Kafka, Slack)
 │
-├── services/                  # Microservices
-│   ├── predict/              # FastAPI prediction service
-│   └── rag/                  # RAG retrieval service
+├── webapp/                    # FastAPI Backend
+│   ├── main.py                # App entry point
+│   ├── routers/               # API endpoints
+│   │   ├── agent.py           # Agent interaction
+│   │   ├── ingestion.py       # Live event streaming
+│   │   ├── models.py          # ML training & deployment
+│   │   ├── notifications.py   # In-app notifications
 │
-├── ingest/                    # Data ingestion
-│   └── dags/                 # Airflow DAGs (auto-retrain)
+├── frontend/                  # React Frontend
+│   ├── src/
+│   │   ├── components/        # Reusable UI components
+│   │   ├── pages/             # Dashboard, Models, Agent pages
+│   │   ├── api/               # Axios client
 │
-├── spark_jobs/               # Spark streaming & batch
-│   └── streaming_to_delta.py
+├── models/                    # ML Training Logic
+│   ├── live_train.py          # Real-time training pipeline
 │
-├── features/                  # Feature engineering
-│   ├── feature_store.py      # Feast integration
-│   └── transformers.py
+├── ingest/                    # Data Ingestion
+│   ├── live_producer.py       # Kafka event producer
 │
-├── models/                    # Model training
-│   ├── train_forecast.py     # Prophet, LSTM, ETS
-│   └── optuna_study.py       # Hyperparameter tuning
-│
-├── mlflow_utils/             # MLflow utilities
-│   ├── auto_promote.py       # Model promotion
-│   └── cli.py                # CLI tools
-│
-├── conf/                      # Configuration
-│   ├── prometheus.yml        # Prometheus scrape config
-│   ├── alerting_rules.yml    # Alert rules
-│   └── alertmanager.yml      # Alertmanager routing
-│
-├── deploy/                    # Deployment
-│   └── helm/                 # Helm charts (predict, rag)
-│
-├── infra/                     # Infrastructure
-│   └── terraform/            # EKS, MSK, RDS
-│
-├── tests/                     # Test suites
-│   ├── e2e/                  # End-to-end tests
-│   └── chaos/                # Chaos engineering
-│
-├── perf/                      # Performance testing
-│   └── locustfile.py         # Load tests
-│
-├── docs/                      # Documentation
-│   ├── SECURITY.md           # Security guide
-│   └── COST_ESTIMATE.md      # AWS/GCP costs
-│
-└── notebooks/                 # Jupyter notebooks
-    ├── 01_EDA.ipynb
-    ├── 02_baselines.ipynb
-    └── 04_rag_demo.ipynb
+├── deploy/                    # Deployment Configs
+├── infra/                     # Infrastructure (Terraform, Docker)
+├── tests/                     # Test Suites
+└── notebooks/                 # EDA & Prototyping
 ```
 
 ---
@@ -365,177 +239,12 @@ locust -f perf/locustfile.py --host=http://localhost:8000
 ## 🔧 Configuration
 
 ### Environment Variables
-
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `MLFLOW_TRACKING_URI` | MLflow server URL | `http://localhost:5000` |
-| `KAFKA_BOOTSTRAP_SERVERS` | Kafka brokers | `localhost:9092` |
+| `KAFKA_BOOTSTRAP` | Kafka brokers | `localhost:9093` |
 | `OPENAI_API_KEY` | OpenAI API key | Required for agents |
-| `SLACK_WEBHOOK_URL` | Slack notifications | Optional |
-| `MODEL_NAME` | Model to serve | `forecasting-model` |
-
-### Agent Policy (`conf/agent_policy.json`)
-
-```json
-{
-  "drift": {
-    "threshold": 0.1,
-    "metric_name": "model_drift_score"
-  },
-  "actions": {
-    "allowed": ["alert", "retrain", "promote", "rollback"],
-    "require_confirmation": ["rollback"]
-  },
-  "safety": {
-    "max_retrains_per_day": 3,
-    "dry_run_mode": false
-  }
-}
-```
-
----
-
-## 📈 Observability
-
-### Metrics
-
-Access Grafana dashboards at `http://localhost:3000` (admin/admin)
-
-| Dashboard | Metrics |
-|-----------|---------|
-| ML Platform | P50/P95/P99 latency, error rate, throughput |
-| Model Drift | Drift score, feature distributions |
-| Agent Actions | Action counts, execution time |
-| Infrastructure | CPU, memory, Kafka lag |
-
-### Alerting
-
-| Alert | Threshold | Severity |
-|-------|-----------|----------|
-| HighPredictionLatency | P99 > 500ms | Warning |
-| ModelDriftDetected | drift > 0.1 | Warning |
-| CriticalKafkaLag | lag > 100k | Critical |
-
----
-
-## 🧪 Testing
-
-```bash
-# Unit tests
-pytest tests/ -v --cov=. --cov-report=html
-
-# E2E tests (requires Docker)
-docker-compose -f tests/e2e/docker-compose.e2e.yml up -d
-E2E_MODE=true pytest tests/e2e/ -v
-
-# Chaos tests
-pytest tests/chaos/ -v
-
-# Load tests
-locust -f perf/locustfile.py --host=http://localhost:8000 \
-  --users=100 --spawn-rate=10 --run-time=5m --headless
-```
-
----
-
-## 🚢 Deployment
-
-### Kubernetes (Helm)
-
-```bash
-# Deploy prediction service
-helm upgrade --install predict ./deploy/helm/predict \
-  --namespace ml-services \
-  --set image.tag=latest \
-  --set replicaCount=3
-
-# Deploy RAG service
-helm upgrade --install rag ./deploy/helm/rag \
-  --namespace ml-services
-```
-
-### Terraform (AWS)
-
-```bash
-cd infra/terraform
-terraform init
-terraform plan -var="environment=production"
-terraform apply
-```
-
-### CI/CD (GitHub Actions)
-
-The pipeline automatically:
-1. Runs unit tests
-2. Builds Docker images
-3. Pushes to GHCR
-4. Deploys to staging
-5. Deploys to production (with approval)
-
----
-
-## 💰 Cost Estimates
-
-| Environment | AWS | GCP |
-|-------------|-----|-----|
-| Staging | ~$320/month | ~$305/month |
-| Production | ~$1,910/month | ~$1,590/month |
-
-See [docs/COST_ESTIMATE.md](docs/COST_ESTIMATE.md) for detailed breakdown.
-
----
-
-## 🔒 Security
-
-- **Encryption**: TLS 1.3 in transit, AES-256 at rest (KMS)
-- **RBAC**: Feature store, MLflow, Kubernetes access control
-- **PII Masking**: Pseudonymization in pipelines
-- **Audit Logging**: Structured logs for all agent actions
-
-See [docs/SECURITY.md](docs/SECURITY.md) for security guidelines.
-
----
-
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [SECURITY.md](docs/SECURITY.md) | Security architecture |
-| [COST_ESTIMATE.md](docs/COST_ESTIMATE.md) | Infrastructure costs |
-| [infra/README.md](infra/README.md) | Operator guide |
-| [conf/MONITORING.md](conf/MONITORING.md) | Observability setup |
-
----
-
-## 🛠 Development
-
-### Setup
-
-```bash
-# Install pre-commit hooks
-pip install pre-commit
-pre-commit install
-
-# Run formatters
-black .
-isort .
-
-# Run linters
-flake8 .
-mypy .
-```
-
-### Adding a New Tool
-
-```python
-# agents/tools/tool_custom.py
-from agents.tools.base import BaseTool, ToolResult
-
-class CustomTool(BaseTool):
-    def execute(self, **kwargs) -> ToolResult:
-        # Implementation
-        return ToolResult(success=True, data=result)
-```
+| `SLACK_WEBHOOK_URL` | Optional Slack Integration | - |
 
 ---
 
@@ -547,33 +256,16 @@ class CustomTool(BaseTool):
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### Code Standards
-
-- **Style**: Black (line length 100), isort
-- **Types**: Full type annotations
-- **Tests**: >80% coverage required
-- **Docs**: Docstrings for public APIs
-
 ---
 
 ## 📄 License
-
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file.
-
----
-
-## 🙏 Acknowledgments
-
-- [MLflow](https://mlflow.org/) - Model registry and tracking
-- [Apache Kafka](https://kafka.apache.org/) - Event streaming
-- [FastAPI](https://fastapi.tiangolo.com/) - API framework
-- [Prometheus](https://prometheus.io/) - Monitoring
 
 ---
 
 <div align="center">
 
-**Built with ❤️ for production ML at scale**
+**Built with ❤️ for production ML at scale by Syed Abdul Ahad**
 
 [⬆ Back to Top](#-autonomous-enterprise-ai-decision-system)
 

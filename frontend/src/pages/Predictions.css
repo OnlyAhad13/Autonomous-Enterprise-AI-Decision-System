@@ -1,0 +1,134 @@
+.prediction-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.feature-form {
+    height: fit-content;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.form-group input {
+    width: 100%;
+}
+
+.feature-form .btn {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.prediction-result {
+    text-align: center;
+}
+
+.result-value {
+    font-size: 48px;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 24px 0;
+}
+
+.confidence-range {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+}
+
+.range-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.range-values {
+    font-size: 16px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.inference-time {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.model-badge {
+    background: var(--bg-tertiary);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--accent-secondary);
+}
+
+.importance-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.importance-item {
+    display: grid;
+    grid-template-columns: 120px 1fr 80px;
+    align-items: center;
+    gap: 16px;
+}
+
+.feature-name {
+    font-weight: 500;
+}
+
+.importance-bar-container {
+    height: 24px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.importance-bar {
+    height: 100%;
+    border-radius: var(--radius-sm);
+    transition: width 0.5s ease;
+}
+
+.importance-bar.positive {
+    background: var(--accent-success);
+}
+
+.importance-bar.negative {
+    background: var(--accent-error);
+}
+
+.importance-value {
+    text-align: right;
+    font-weight: 600;
+}
+
+.importance-value.positive {
+    color: var(--accent-success);
+}
+
+.importance-value.negative {
+    color: var(--accent-error);
+}
+
+@media (max-width: 900px) {
+    .prediction-layout {
+        grid-template-columns: 1fr;
+    }
+}

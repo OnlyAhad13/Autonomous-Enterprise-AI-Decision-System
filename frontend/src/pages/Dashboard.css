@@ -1,0 +1,127 @@
+.kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kpi-icon {
+    color: var(--accent-primary);
+}
+
+.dashboard-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--text-muted);
+    border-radius: 50%;
+}
+
+.status-dot.connected {
+    background: var(--accent-success);
+    animation: pulse 2s infinite;
+}
+
+.last-update {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.dashboard-bottom {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.recent-events {
+    overflow: hidden;
+}
+
+.recent-events code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent-secondary);
+}
+
+.system-status {
+    height: fit-content;
+}
+
+.status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.status-item:last-child {
+    border-bottom: none;
+}
+
+.status-name {
+    text-transform: capitalize;
+    font-weight: 500;
+}
+
+/* Status badge overrides for event types */
+.status-badge.order_placed,
+.status-badge.order {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--accent-secondary);
+}
+
+.status-badge.page_view,
+.status-badge.click {
+    background: rgba(6, 182, 212, 0.15);
+    color: var(--accent-info);
+}
+
+.status-badge.item_click,
+.status-badge.view {
+    background: rgba(100, 116, 139, 0.15);
+    color: var(--text-secondary);
+}
+
+.status-badge.purchase,
+.status-badge.add_to_cart {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--accent-success);
+}
+
+.status-badge.checkout_started {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--accent-warning);
+}
+
+@media (max-width: 1200px) {
+    .dashboard-bottom {
+        grid-template-columns: 1fr;
+    }
+}
